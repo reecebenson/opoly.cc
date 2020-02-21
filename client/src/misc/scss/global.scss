@@ -1,0 +1,56 @@
+/**
+ * Global Styling
+ */
+@import './variables.scss';
+
+body {
+  background-color: $primaryColor;
+}
+
+.ui.pointing.menu {
+  .item {
+    &.active {
+      font-weight: bold;
+    }
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  &+.tab {
+    text-align: left;
+  }
+}
+
+.form {
+  .field {
+    label {
+      margin-bottom: -0.2em;
+
+      &+ small {
+        display: block;
+        color: #AAA;
+        margin-bottom: 0.25em;
+      }
+    }
+  }
+}
+
+.underline {
+  border-bottom: 1px solid #CCC;
+  margin-bottom: 0.5em;
+  padding-bottom: 0.25em;
+}
+
+input, textarea {
+  &::placeholder {
+    color: rgb(32, 32, 32) !important;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  div, button {
+    border-radius: 0 !important;
+  }
+}
