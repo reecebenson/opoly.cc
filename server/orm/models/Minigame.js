@@ -11,20 +11,16 @@ const Sequelize = require("sequelize");
 module.exports = db => {
   return {
     info: {
-      name: "Game"
+      name: "Minigame"
     },
     exec: () =>
-      db.define("games", {
+      db.define("minigames", {
         id: {
           type: Sequelize.UUID,
           defaultValue: Sequelize.UUIDV4,
           primaryKey: true
         },
         name: {
-          type: Sequelize.STRING,
-          allowNull: false
-        },
-        key: {
           type: Sequelize.STRING,
           allowNull: false
         }

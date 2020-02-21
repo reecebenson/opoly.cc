@@ -11,20 +11,24 @@ const Sequelize = require("sequelize");
 module.exports = db => {
   return {
     info: {
-      name: "Game"
+      name: "Player"
     },
     exec: () =>
-      db.define("games", {
+      db.define("players", {
         id: {
           type: Sequelize.UUID,
           defaultValue: Sequelize.UUIDV4,
           primaryKey: true
         },
+        gameId: {
+          type: Sequelize.STRING,
+          allowNull: true
+        },
         name: {
           type: Sequelize.STRING,
           allowNull: false
         },
-        key: {
+        password: {
           type: Sequelize.STRING,
           allowNull: false
         }
