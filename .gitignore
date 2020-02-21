@@ -4,3 +4,6 @@
 # Exclude all environment files excluding the example
 **.env**
 !.env.example
+
+# Ignore Database
+.data/
