@@ -1,0 +1,54 @@
+{
+  "name": "opoly-client",
+  "version": "1.0.0",
+  "description": "Opoly: Client",
+  "private": true,
+  "author": "Reece Benson",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reecebenson/opoly.cc.git"
+  },
+  "bugs": {
+    "url": "https://github.com/reecebenson/opoly.cc/issues"
+  },
+  "scripts": {
+    "start-local": "REACT_APP_DEBUG=1 REACT_APP_ENV=local react-scripts start",
+    "start-dev": "REACT_APP_DEBUG=1 REACT_APP_ENV=development react-scripts start",
+    "start-prod": "REACT_APP_DEBUG=0 REACT_APP_ENV=production react-scripts start",
+    "build-prod": "REACT_APP_DEBUG=0 REACT_APP_ENV=production react-scripts build",
+    "test-prod": "REACT_APP_DEBUG=0 REACT_APP_ENV=production react-scripts test"
+  },
+  "dependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "axios": "^0.19.2",
+    "prop-types": "^15.7.2",
+    "query-string": "^6.11.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-scripts": "3.4.0",
+    "redux": "^4.0.5",
+    "redux-thunk": "^2.3.0",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^0.88.2",
+    "throttle-debounce": "^2.1.0",
+    "uuid": "^3.4.0"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

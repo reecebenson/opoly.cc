@@ -1,0 +1,6 @@
+# Hide installable packages
+**/node_modules/**
+
+# Exclude all environment files excluding the example
+**.env**
+!.env.example
