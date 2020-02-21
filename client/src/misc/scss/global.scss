@@ -7,6 +7,12 @@ body {
   background-color: $primaryColor;
 }
 
+* {
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+}
+
 .ui.pointing.menu {
   .item {
     &.active {
@@ -47,10 +53,17 @@ input, textarea {
   &::placeholder {
     color: rgb(32, 32, 32) !important;
   }
+
+  font-size: 0.95em !important;
 }
 
 @media screen and (max-width: 375px) {
   div, button {
     border-radius: 0 !important;
   }
+}
+
+small.error {
+  font-weight: bold;
+  color: red !important;
 }

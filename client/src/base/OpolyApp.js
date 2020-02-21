@@ -1,14 +1,9 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { Route, Switch } from "react-router-dom";
 import { SemanticToastContainer } from "react-semantic-toasts";
 import { LandingPage, Terms } from '../components/Pages';
 
 class OpolyApp extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     // Get our applications className
     let appClass = `opoly-app`;
