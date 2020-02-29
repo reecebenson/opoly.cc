@@ -19,9 +19,9 @@ class Corner extends Component {
 
   render() {
     return (
-      <div className="item corner">
+      <td className="item corner">
         <h3>{this.state.category}</h3>
-      </div>
+      </td>
     );
   }
 }

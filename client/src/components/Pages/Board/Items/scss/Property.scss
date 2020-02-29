@@ -1,56 +1,70 @@
-$border-type: 1px solid black;
+$border-type: 2px solid black;
 
 .property {
-  min-height: 4.482vh;
+  cursor: pointer;
+  vertical-align: top;
+  min-height: 77px;
+  height: 77px;
+  max-height: 77px;
+  
+  &:hover {
+    background-color: #c6d6c5;
+  }
 
-  .content {
-    position: relative;
-    text-align: center;
-
-    .station {
-      position: absolute;
-      text-align: center;
-      top: 5px;
-      left: calc(50% - 45px);
-
-      > img {
-        position: absolute;
-        top: 25px;
-        left: calc(50% - 20px);
-        max-height: 40px;
+  &.colour-left,
+  &.colour-right {
+    .content {
+      :not(.station) {
+        width: calc(100% - 25px);
       }
+    }
+  }
+
+  &.colour-left {
+    .community-chest {
+      margin-left: 15px;
     }
 
     .chance {
-      position: absolute;
-      text-align: center;
-      top: 0px;
-      left: calc(50% - 22px);
-
-      > img {
-        position: absolute;
-        top: 25px;
-        left: calc(50% - 20px);
-        max-height: 40px;
-      }
+      margin-top: 5px;
     }
+  }
 
+  &.colour-right {
+    .station,
+    .chance {
+      margin-top: 10px;
+    }
+  }
+
+  &.colour-top,
+  &.colour-bottom {
+    .community-chest,
+    .chance,
+    .station {
+      margin-top: 5px;
+    }
+  }
+
+  .content {
+    text-align: center;
+    text-overflow: ellipsis;
+
+    .station,
+    .chance,
     .community-chest {
-      position: absolute;
       text-align: center;
-      top: 0px;
-      left: calc(50% - 55px);
 
       > img {
-        position: absolute;
-        top: 25px;
-        left: calc(50% - 20px);
         max-height: 40px;
+        max-width: 60px;
       }
     }
   }
 
   .colour {
+    border-bottom: $border-type;
+    
     /** POSITIONS **/
     &.top {
       height: 20px;
@@ -59,12 +73,13 @@ $border-type: 1px solid black;
     }
     
     &.right, &.left {
-      border-left: $border-type;
+      border: none;
       height: 100%;
       width: 20px;
     }
 
     &.right {
+      border-left: $border-type;
       float: right;
     }
 

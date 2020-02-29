@@ -12,8 +12,8 @@ class Property extends Component {
       name: props.gameManager.getPropertyName(props.id),
       price: 0,
       category: props.type !== undefined ? props.type : "",
-      colour: props.colour,
-      cPos: props.cPos,
+      colour: props.gameManager.getPropertyColour(props.id),
+      pos: props.pos,
       weight: "",
       ownedBy: "",
       mortgagedState: false,
@@ -30,13 +30,13 @@ class Property extends Component {
   }
 
   renderColour = () => {
-    const { colour, cPos } = this.state;
+    const { colour, pos } = this.state;
 
-    if (!cPos) {
+    if (!pos) {
       throw "Unable to find Property position";
     }
 
-    const propertyClasses = `colour ${cPos} ${colour}`;
+    const propertyClasses = `colour ${pos} ${colour}`;
     return <div className={propertyClasses}>&nbsp;</div>;
   }
 
@@ -45,13 +45,13 @@ class Property extends Component {
 
     switch (category) {
       case "station":
-        return <div className={category}><span>{name}</span><img src={Images.Station} /></div>;
+        return <div className={category}><span>{name}</span><br /><img src={Images.Station} /></div>;
 
       case "chance":
-        return <div className={category}><span>Chance</span><img src={Images.Chance} /></div>;
+        return <div className={category}><span>Chance</span><br /><img src={Images.Chance} /></div>;
 
       case "community-chest":
-        return <div className={category}><span>Community Chest</span><img src={Images.CommunityChest} /></div>;
+        return <div className={category}><span>Community Chest</span><br /><img src={Images.CommunityChest} /></div>;
 
       case "tax":
         return <div className={category}>Super Tax</div>;
@@ -68,25 +68,30 @@ class Property extends Component {
   }
 
   render() {
-    const { colour, cPos, category } = this.state;
-    console.log("gameManager", this.props);
+    const { colour, pos, category } = this.state;
 
     return (
-      <div className={`item property ${category} colour-${cPos}`}>
+      <td
+        className={`item property ${category} colour-${pos}`}
+        onMouseOver={() => this.props.handleMouseOver(this.props.id)}
+        onMouseLeave={() => this.props.resetMouseOver(this.props.id)}
+      >
         {colour !== "invisible" && this.renderColour()}
         <div className="content">
           {this.renderCard()}
         </div>
-      </div>
+      </td>
     );
   }
 }
 
 Property.propTypes = {
-  id: PropTypes.number.isRequired,
+  id: PropTypes.string.isRequired,
   gameManager: PropTypes.any.isRequired,
+  handleMouseOver: PropTypes.func.isRequired,
+  resetMouseOver: PropTypes.func.isRequired,
   colour: PropTypes.string.isRequired,
-  cPos: PropTypes.string.isRequired,
+  pos: PropTypes.string.isRequired,
   type: PropTypes.string,
 };
 

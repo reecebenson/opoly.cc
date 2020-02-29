@@ -3,45 +3,134 @@ class GameManager {
     console.log("game manager");
   }
 
-  debugPropertyNames = () => ({
-    1: "Old Kent Road",
-    2: "Whitechapel Road",
-    3: "Kingscross Station",
-    4: "The Angel Islington",
-    5: "Euston Road",
-    6: "Pentonville Road",
-    7: "Pall Mall",
-    8: "Electric Company",
-    9: "Whitehall",
-    10: "Northumerberland Avenue",
-    11: "Marlybone Station",
-    12: "Bow Street",
-    13: "Marlborough Street",
-    14: "Vine Street",
-    15: "The Strand",
-    16: "Fleet Street",
-    17: "Trafalgar Square",
-    18: "Fenchurch Station",
-    19: "Leicester Square",
-    20: "Conventry Street",
-    21: "Water works",
-    22: "Piccadilly",
-    23: "Regent Street",
-    24: "Oxford Street",
-    25: "Bond Street",
-    26: "Liverpool Street Station",
-    27: "Park Lane",
-    28: "Mayfair"
+  debugProperties = () => ({
+    1: {
+      name: "Old Kent Road",
+      colour: "dark-brown"
+    },
+    2: {
+      name: "Whitechapel Road",
+      colour: "dark-brown"
+    },
+    3: {
+      name: "Kingscross Station",
+      colour: "invisible"
+    },
+    4: {
+      name: "The Angel Islington",
+      colour: "light-blue"
+    },
+    5: {
+      name: "Euston Road",
+      colour: "light-blue"
+    },
+    6: {
+      name: "Pentonville Road",
+      colour: "light-blue"
+    },
+    7: {
+      name: "Pall Mall",
+      colour: "bright-pink"
+    },
+    8: {
+      name: "Electric Company",
+      colour: "invisible"
+    },
+    9: {
+      name: "Whitehall",
+      colour: "bright-pink"
+    },
+    10: {
+      name: "Northumer-berland Avenue",
+      colour: "bright-pink"
+    },
+    11: {
+      name: "Marlybone Station",
+      colour: "invisible"
+    },
+    12: {
+      name: "Bow Street",
+      colour: "orange"
+    },
+    13: {
+      name: "Marlborough Street",
+      colour: "orange"
+    },
+    14: {
+      name: "Vine Street",
+      colour: "orange"
+    },
+    15: {
+      name: "The Strand",
+      colour: "red"
+    },
+    16: {
+      name: "Fleet Street",
+      colour: "red"
+    },
+    17: {
+      name: "Trafalgar Square",
+      colour: "red"
+    },
+    18: {
+      name: "Fenchurch Station",
+      colour: "invisible"
+    },
+    19: {
+      name: "Leicester Square",
+      colour: "yellow"
+    },
+    20: {
+      name: "Conventry Street",
+      colour: "yellow"
+    },
+    21: {
+      name: "Water works",
+      colour: "invisible"
+    },
+    22: {
+      name: "Piccadilly",
+      colour: "yellow"
+    },
+    23: {
+      name: "Regent Street",
+      colour: "green"
+    },
+    24: {
+      name: "Oxford Street",
+      colour: "green"
+    },
+    25: {
+      name: "Bond Street",
+      colour: "green"
+    },
+    26: {
+      name: "Liverpool Street Station",
+      colour: "invisible"
+    },
+    27: {
+      name: "Park Lane",
+      colour: "blue"
+    },
+    28: {
+      name: "Mayfair",
+      colour: "blue"
+    },
   });
 
   getPropertyName = (id) => {
-    let propNames = this.debugPropertyNames();
-    return Object.keys(propNames).includes(id) ? propNames[id] : "Unknown";
+    let properties = this.debugProperties();
+    return Object.keys(properties).includes(id) ? properties[id].name : "Unknown";
+  }
+
+  getPropertyColour = (id) => {
+    let properties = this.debugProperties();
+    return Object.keys(properties).includes(id) ? properties[id].colour : "invisible";
   }
 
   addProperty = (options = {}) => {
     /*
-    {
+   {
       name: "",
       price: 0,
       category: "",
