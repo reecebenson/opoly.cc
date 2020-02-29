@@ -1,0 +1,110 @@
+$border-type: 1px solid black;
+
+.property {
+  min-height: 4.482vh;
+
+  .content {
+    position: relative;
+    text-align: center;
+
+    .station {
+      position: absolute;
+      text-align: center;
+      top: 5px;
+      left: calc(50% - 45px);
+
+      > img {
+        position: absolute;
+        top: 25px;
+        left: calc(50% - 20px);
+        max-height: 40px;
+      }
+    }
+
+    .chance {
+      position: absolute;
+      text-align: center;
+      top: 0px;
+      left: calc(50% - 22px);
+
+      > img {
+        position: absolute;
+        top: 25px;
+        left: calc(50% - 20px);
+        max-height: 40px;
+      }
+    }
+
+    .community-chest {
+      position: absolute;
+      text-align: center;
+      top: 0px;
+      left: calc(50% - 55px);
+
+      > img {
+        position: absolute;
+        top: 25px;
+        left: calc(50% - 20px);
+        max-height: 40px;
+      }
+    }
+  }
+
+  .colour {
+    /** POSITIONS **/
+    &.top {
+      height: 20px;
+      width: 100%;
+      border-bottom: $border-type;
+    }
+    
+    &.right, &.left {
+      border-left: $border-type;
+      height: 100%;
+      width: 20px;
+    }
+
+    &.right {
+      float: right;
+    }
+
+    &.left {
+      float: left;
+      border-right: $border-type;
+      margin-right: 5px;
+    }
+    
+    /** COLOURS **/
+    &.dark-brown {
+      background-color: #884b1e;
+    }
+
+    &.light-blue {
+      background-color: #96d2f4;
+    }
+
+    &.bright-pink {
+      background-color: #d32884;
+    }
+
+    &.orange {
+      background-color: #eb9a0d;
+    }
+
+    &.red {
+      background-color: #db0a29;
+    }
+
+    &.yellow {
+      background-color: #e9ef37;
+    }
+
+    &.green {
+      background-color: #03ac59;
+    }
+
+    &.blue {
+      background-color: #3e64ab;
+    }
+  }
+}

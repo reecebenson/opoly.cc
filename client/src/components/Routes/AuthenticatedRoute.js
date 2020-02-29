@@ -8,17 +8,17 @@ const AuthenticatedRoute = ({
   component: Component,
   ...rest
 }) => (
-  <Route
-    {...rest}
-    render={props =>
-      isAuthenticated ? (
-        <Component {...props} />
-      ) : (
-        <Redirect to="/login?noauth" />
-      )
-    }
-  />
-);
+    <Route
+      {...rest}
+      render={props =>
+        isAuthenticated ? (
+          <Component {...props} />
+        ) : (
+            <Redirect to="/" />
+          )
+      }
+    />
+  );
 
 AuthenticatedRoute.propTypes = {
   component: PropTypes.any.isRequired,

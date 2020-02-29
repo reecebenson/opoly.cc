@@ -27,10 +27,11 @@ const WelcomeSnippet = () => (
 
     <h3 className="underline">Who made this?</h3>
     <p>
-      <a target="_blank" rel="noopener noreferrer" href="//github.com/reecebenson">Reece Benson</a>.
-      I made this just as a bit of a side-project alongside
-      working on my final year project, just to get a bit of a
-      break from a never ending thesis.
+      <a target="_blank" rel="noopener noreferrer" href="//github.com/reecebenson">Reece Benson</a>,
+      and a few friends. Special thanks to:<br />
+      <ul>
+        <li>Elliott</li>
+      </ul>
     </p>
     <p style={{ textAlign: "center" }}>
       <a target="_blank" rel="noopener noreferrer" href="//twitter.com/@reecebenson"><Icon circular link color="black" inverted name="twitter" /></a>
