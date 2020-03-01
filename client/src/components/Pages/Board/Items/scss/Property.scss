@@ -1,0 +1,125 @@
+$border-type: 2px solid black;
+
+.property {
+  cursor: pointer;
+  vertical-align: top;
+  min-height: 77px;
+  height: 77px;
+  max-height: 77px;
+  
+  &:hover {
+    background-color: #c6d6c5;
+  }
+
+  &.colour-left,
+  &.colour-right {
+    .content {
+      :not(.station) {
+        width: calc(100% - 25px);
+      }
+    }
+  }
+
+  &.colour-left {
+    .community-chest {
+      margin-left: 15px;
+    }
+
+    .chance {
+      margin-top: 5px;
+    }
+  }
+
+  &.colour-right {
+    .station,
+    .chance {
+      margin-top: 10px;
+    }
+  }
+
+  &.colour-top,
+  &.colour-bottom {
+    .community-chest,
+    .chance,
+    .station {
+      margin-top: 5px;
+    }
+  }
+
+  .content {
+    text-align: center;
+    text-overflow: ellipsis;
+
+    .station,
+    .chance,
+    .community-chest {
+      text-align: center;
+
+      > img {
+        max-height: 40px;
+        max-width: 60px;
+      }
+    }
+  }
+
+  .colour {
+    border-bottom: $border-type;
+    
+    /** POSITIONS **/
+    &.top {
+      height: 20px;
+      width: 100%;
+      border-bottom: $border-type;
+    }
+    
+    &.right, &.left {
+      border: none;
+      height: 100%;
+      width: 20px;
+    }
+
+    &.right {
+      border-left: $border-type;
+      float: right;
+    }
+
+    &.left {
+      float: left;
+      border-right: $border-type;
+      margin-right: 5px;
+    }
+    
+    /** COLOURS **/
+    &.dark-brown {
+      background-color: #884b1e;
+    }
+
+    &.light-blue {
+      background-color: #96d2f4;
+    }
+
+    &.bright-pink {
+      background-color: #d32884;
+    }
+
+    &.orange {
+      background-color: #eb9a0d;
+    }
+
+    &.red {
+      background-color: #db0a29;
+    }
+
+    &.yellow {
+      background-color: #e9ef37;
+    }
+
+    &.green {
+      background-color: #03ac59;
+    }
+
+    &.blue {
+      background-color: #3e64ab;
+    }
+  }
+}

@@ -20,6 +20,10 @@ module.exports = db => {
           defaultValue: Sequelize.UUIDV4,
           primaryKey: true
         },
+        owner: {
+          type: Sequelize.STRING,
+          allowNull: true
+        },
         name: {
           type: Sequelize.STRING,
           allowNull: false
@@ -27,6 +31,18 @@ module.exports = db => {
         key: {
           type: Sequelize.STRING,
           allowNull: false
+        },
+        pregame: {
+          type: Sequelize.BOOLEAN,
+          defaultValue: true
+        },
+        active: {
+          type: Sequelize.BOOLEAN,
+          defaultValue: false
+        },
+        finished: {
+          type: Sequelize.BOOLEAN,
+          defaultValue: false
         }
       })
   };

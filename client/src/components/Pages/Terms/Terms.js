@@ -10,7 +10,7 @@ class Terms extends Component {
       menuItem: 'Terms and Conditions',
       render: () => (
         <div>
-          <Tab.Pane>
+          <Tab.Pane attached={false}>
             <p>Hereafter, "The Website" refers to officers, directors, owners, agents, employees,
             associates and any other affiliates of this website, *.opoly.cc, and its content.
             "User" refers to any person or system that directly or indirectly requests information

@@ -1,5 +1,7 @@
 import { combineReducers } from "redux";
+import { game, player } from '../reducers';
 
 export default combineReducers({
-  /* todo */
+  game,
+  player
 });
