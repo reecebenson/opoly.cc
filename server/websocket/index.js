@@ -25,7 +25,6 @@ class WSL {
     if (Object.keys(this._games).includes(gameId)) {
       return this._games[gameId];
     }
-
     return null;
   };
 
@@ -85,6 +84,7 @@ class WSL {
     Object.keys(clients).forEach(key => {
       let player = clients[key];
       if (player.socket) {
+        console.log("Send END GAME");
         player.socket.send(JSON.stringify({ type: "END_GAME" }));
       }
     });
@@ -189,7 +189,11 @@ class WSL {
        */
       case "game-on": {
         let game = this.getGame(message.game.id);
-        if (!game) { return; }
+        if (!game) {
+          return ws.send(JSON.stringify({
+            type: "INVALID_GAME"
+          }));
+        }
 
         // Check if this player exists
         if (!this.clientExists(message.game.id, message.player.id)) {
@@ -230,11 +234,6 @@ class WSL {
         break;
       }
 
-
-
-
-
-
       /**
        * ------------------------------------------------------
        * LOBBY MESSAGES
@@ -269,6 +268,30 @@ class WSL {
         this.broadcastToClients({
           type: "START_GAME"
         }, game.id);
+        break;
+      }
+
+      case "joingame": {
+        let game = this.getGame(message.game.id);
+        if (!game) {
+          console.log("invalid game");
+          return ws.send(JSON.stringify({
+            type: "INVALID_GAME"
+          }));
+        }
+
+        // Check if this player exists
+        if (!this.clientExists(message.game.id, message.player.id)) {
+          this.addClientToGame(message.game.id, ws, message.player);
+        }
+        else {
+          this.updateClientSocket(message.game.id, message.player.id, ws);
+        }
+
+        // Move client to board
+        ws.send(JSON.stringify({
+          type: "START_GAME",
+        }));
         break;
       }
 

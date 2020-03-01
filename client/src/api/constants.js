@@ -4,7 +4,7 @@ const env = process.env;
 const getDomainEnv = function () {
   switch (env.REACT_APP_ENV) {
     case "local":
-      return "//127.0.0.1";
+      return "//192.168.0.19";
 
     default:
     case "live":

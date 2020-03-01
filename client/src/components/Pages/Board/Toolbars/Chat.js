@@ -8,7 +8,7 @@ class Chat extends Component {
 
     this.state = {
       data: {
-
+        chatMessage: ""
       },
       chats: props.chats
     };
@@ -32,23 +32,28 @@ class Chat extends Component {
   };
 
   keyPress = (e) => {
+    let msg = this.state.data.chatMessage;
     if (e.keyCode !== 13) { return; }
-    this.props.chatMessage(this.state.data.chatMessage);
+    if (msg === "") { return; }
+    if (msg.length > 60) { msg = msg.substring(0, 60) + "..." }
+
+    // Send message
+    this.props.chatMessage(msg);
     this.setState({ data: { chatMessage: "" } });
   }
 
   render() {
     return (
-      <div class="chat">
+      <div className="chat">
         <h3>Chat</h3>
-        <div class="messages">
+        <div className="messages">
           <ul>
-            {this.state.chats.map((e) => (
-              <li title={e.time}><strong>[{e.playerName}]</strong>: {e.message}</li>
+            {this.state.chats.map((e, i) => (
+              <li key={i} title={e.time}><strong>[{e.playerName}]</strong>: {e.message}</li>
             ))}
           </ul>
         </div>
-        <div class="user-input">
+        <div className="user-input">
           <Input
             name="chatMessage"
             value={this.state.data.chatMessage}

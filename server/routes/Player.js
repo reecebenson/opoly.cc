@@ -24,12 +24,13 @@ module.exports = (app, models) => {
     // Check if the Game ID exists
     let game = await models.Game.findOne({
       where: {
-        id: data.gameId,
-        pregame: true,
-        active: false,
-        finished: false
+        id: data.gameId
       }
     });
+
+    if (!game) {
+      return res.json({ status: 'FAIL', message: 'No game!' });
+    }
 
     // Get the owner of the Game
     let owner = await models.Player.findOne({
@@ -38,6 +39,10 @@ module.exports = (app, models) => {
         id: game.owner
       }
     });
+
+    if (!owner) {
+      return res.json({ status: 'FAIL', message: 'No owner!' });
+    }
 
     // Check if the Player exists against this Game
     let player = await models.Player.findOne({

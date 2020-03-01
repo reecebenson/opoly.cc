@@ -20,11 +20,11 @@ class SystemLogs extends Component {
 
   render() {
     return (
-      <div class="system-logs">
+      <div className="system-logs">
         <h3>System Logs</h3>
         <ul>
-          {this.state.logs.map((e) => (
-            <li><strong>[{e.time}]</strong>: {e.message}</li>
+          {this.state.logs.map((e, i) => (
+            <li key={i}><strong>[{e.time}]</strong>: {e.message}</li>
           ))}
         </ul>
       </div>

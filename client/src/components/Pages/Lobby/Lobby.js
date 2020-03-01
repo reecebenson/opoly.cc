@@ -4,7 +4,13 @@ import { toast } from 'react-semantic-toasts';
 import { Grid, Tab, Image, Button, Icon } from 'semantic-ui-react';
 import { Footer, LoadingSpinner } from '../../Common';
 import Logo from '../../Common/images/logo.png';
-import { getGameStats, leaveGame, forceEndGame, kickPlayer } from '../../../actions/game';
+import {
+  getGameStats,
+  startGame,
+  leaveGame,
+  forceEndGame,
+  kickPlayer
+} from '../../../actions/game';
 import PropTypes from 'prop-types';
 import { ws as WsURL } from '../../../api/constants';
 
@@ -18,28 +24,18 @@ class Lobby extends Component {
       players: null,
       playerCount: 0,
       isStarting: false,
+      isJoining: false,
+      gameStats: null
     };
 
     this.lobbyWebSocket = null;
   }
 
   componentDidMount() {
-    // Get the game statistics
-    // this.props.getGameStats(this.props.game.id)
-    //   .then(res => {
-    //     let { data } = res;
-    //     this.setState({
-    //       ...this.state,
-    //       ...data
-    //     });
-    //   })
-    //   .catch(err => {
-    //     console.warn("[API]: Error when getting game stats:", err)
-    //     this.setState({
-    //       ...this.state,
-    //       players: [],
-    //     });
-    //   });
+    // Get game stats
+    this.props.getGameStats(this.props.game.id)
+      .then(res => this.setState({ gameStats: res.data }, () => this.forceUpdate()))
+      .catch(err => console.warn('Unable to get game stats.'));
 
     // Setup the WebSocket
     this.setupWebSocket();
@@ -54,14 +50,45 @@ class Lobby extends Component {
         return;
       }
 
-      // Send start game request
-      this.lobbyWebSocket.send(JSON.stringify({
-        type: "startgame",
-        game: this.props.game,
-        player: this.props.player
-      }));
+      // Send start game signal to API
+      this.props.startGame(this.props.game, this.props.player)
+        .then(res => {
+          // Update state
+          this.setState({
+            isStarting: false
+          });
+
+          // WebSocket notice
+          this.lobbyWebSocket.send(JSON.stringify({
+            type: "startgame",
+            game: this.props.game,
+            player: this.props.player
+          }));
+        })
+        .catch(err => console.warn(`Unable to start game.`));
     });
   };
+
+  rejoinGame = () => {
+    this.setState({
+      isJoining: true
+    }, () => {
+      // Check if we have a WebSocket
+      if (!this.lobbyWebSocket) {
+        return;
+      }
+
+      // Send start game signal to API
+      this.props.startGame(this.props.game, this.props.player)
+        .then(res =>
+          this.lobbyWebSocket.send(JSON.stringify({
+            type: "joingame",
+            game: this.props.game,
+            player: this.props.player
+          })))
+        .catch(err => console.warn(`Unable to join game.`));
+    });
+  }
 
   setupWebSocket = () => {
     this.lobbyWebSocket = new WebSocket(`${WsURL}`);
@@ -238,7 +265,7 @@ class Lobby extends Component {
   ]);
 
   render() {
-    const { isStarting, loading, loadText } = this.state;
+    const { isStarting, isJoining, loading, loadText, gameStats } = this.state;
 
     return (
       <div>
@@ -249,9 +276,15 @@ class Lobby extends Component {
               <Image src={Logo} style={{ display: "inline-block", marginBottom: "1em" }} />
             </div>
             <Tab menu={{ pointing: true }} panes={this.tabs()} />
-            {this.props.game.host === this.props.player.id && (
+            {gameStats && gameStats.pregame && this.props.game.host === this.props.player.id && (
               <Button loading={isStarting} positive style={{ width: "100%", marginTop: "1em" }} onClick={this.startGame}>
                 Start Game
+                <Icon name='chevron right' />
+              </Button>
+            )}
+            {gameStats && gameStats.active && (
+              <Button loading={isJoining} primary style={{ width: "100%", marginTop: "1em" }} onClick={this.rejoinGame}>
+                Rejoin Game
                 <Icon name='chevron right' />
               </Button>
             )}
@@ -274,5 +307,11 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getGameStats, leaveGame, forceEndGame, kickPlayer }
+  {
+    getGameStats,
+    startGame,
+    leaveGame,
+    forceEndGame,
+    kickPlayer
+  }
 )(Lobby);

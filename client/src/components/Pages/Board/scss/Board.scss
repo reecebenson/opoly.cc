@@ -50,12 +50,15 @@ $darker-blue: rgb(12, 29, 43);
 
       .chat {
         .messages {
+          min-height: 300px;
           max-height: 300px;
+          overflow-wrap: anywhere;
           overflow-y: scroll;
           scrollbar-width: thin;
 
           ul {
             list-style: none;
+            margin-top: 0;
             padding-left: 0.75em;
           }
         }

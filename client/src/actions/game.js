@@ -23,6 +23,13 @@ export const redLeaveGame = () => ({
   type: PLAYER_QUIT
 });
 
+export const startGame = (game, player) => dispatch =>
+  new API("/api/game/start")
+    .post({
+      game: game,
+      player: player
+    });
+
 export const leaveGame = (gameId, player) => dispatch => {
   // Cleanup localStorage
   localStorage.removeItem("game");

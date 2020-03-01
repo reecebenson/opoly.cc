@@ -32,7 +32,7 @@ class OpolyApp extends Component {
 
           {/* Game Paths */}
           <AuthenticatedRoute path="/game/lobby" exact component={Lobby} gameManager={this.gameManager} />
-          <Route path="/game/play" gameManager={this.gameManager} exact component={Board} />
+          <AuthenticatedRoute path="/game/play" exact component={Board} gameManager={this.gameManager} />
           <AuthenticatedRoute path="/game/end" exact component={Terms} gameManager={this.gameManager} />
 
           {/* Error Page */}

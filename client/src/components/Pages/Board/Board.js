@@ -27,6 +27,12 @@ class Board extends Component {
     if (Object.keys(this.props.game).length > 0 && Object.keys(this.props.player).length > 0) {
       this.setupWebSocket();
     }
+    else {
+      if (localStorage.getItem("game") === undefined && localStorage.getItem("player") === undefined) {
+        console.log("redirect 1");
+        return this.props.history.push("/game/join");
+      }
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -34,6 +40,11 @@ class Board extends Component {
       if (Object.keys(this.props.game).length > 0 && Object.keys(this.props.player).length > 0) {
         this.setupWebSocket();
       }
+    }
+
+    if (!localStorage.getItem("game") && !localStorage.getItem("player")) {
+      console.log("redirect 2");
+      return this.props.history.push("/game/join");
     }
   }
 
@@ -61,11 +72,19 @@ class Board extends Component {
       catch (e) { return console.warn("Unable to parse websocket message.", e); }
 
       switch (message.type) {
+        case "INVALID_GAME": {
+          this.props.history.push("/game/lobby");
+          this.webSocket.onclose = undefined;
+          this.webSocket.close();
+          toast({ title: "The game server session no longer exists." });
+          break;
+        }
+
         case "POLL": {
           this.setState({
             chats: message.data.messages,
             logs: message.data.logs
-          }, () => console.log("State:", this.state));
+          });
           break;
         }
       }

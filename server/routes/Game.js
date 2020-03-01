@@ -83,6 +83,39 @@ module.exports = (app, models) => {
 
   /**
    * ----------------------------------------------------------
+   * @route     /api/game/start
+   * @desc      A route used for starting a game.
+   * @request   POST
+   * @access    Public
+   * ----------------------------------------------------------
+   */
+  app.all("/game/start", async (req, res) => {
+    let data = req.body;
+    if (!data.game || !data.player) {
+      return res.status(403).json({ status: 'FAIL' });
+    }
+
+    let game = await models.Game.findOne({
+      where: {
+        id: data.game.id,
+        owner: data.player.id,
+        hostSecretKey: data.game.hostSecretKey,
+      }
+    });
+
+    if (!game) {
+      res.status(404).json({ status: 'FAIL', message: 'Invalid game.' });
+    }
+
+    // Update the game settings
+    game.pregame = false;
+    game.active = true;
+    game.save();
+    return res.json({ status: 'OK' });
+  });
+
+  /**
+   * ----------------------------------------------------------
    * @route     /api/game/leave
    * @desc      A route used for leaving a game.
    * @request   POST
@@ -210,7 +243,7 @@ module.exports = (app, models) => {
 
     let game = await models.Game.findOne({
       where: {
-        id: data.gameId
+        id: data.gameId,
       }
     });
 
@@ -234,6 +267,14 @@ module.exports = (app, models) => {
 
     // Create the player if it doesn't exist
     if (!player) {
+      if (game.pregame === false) {
+        return res.status(403).json({
+          status: 'FAIL',
+          message: 'Cannot join a game that has started!'
+        });
+      }
+
+      // Create new player
       player = await models.Player.create({
         name: data.player.name,
         password: data.player.password,
@@ -294,7 +335,13 @@ module.exports = (app, models) => {
    */
   app.all("/game/joinables", async (req, res) => {
     let gameData = [];
-    let games = await models.Game.findAll();
+    let games = await models.Game.findAll({
+      where: {
+        pregame: true,
+        active: false,
+        finished: false
+      }
+    });
     for await (const gameObj of games) {
       let game = gameObj.dataValues;
       let gameId = gameObj.id;
@@ -302,7 +349,7 @@ module.exports = (app, models) => {
       // Get Player Count
       let count = await models.Player.count({
         where: {
-          gameId: gameId,
+          gameId: gameId
         }
       });
 
@@ -388,7 +435,7 @@ module.exports = (app, models) => {
       return res.status(404).json({ status: 'FAIL' });
     }
 
-    let game = models.Game.findOne({
+    let game = await models.Game.findOne({
       where: {
         id: data.gameId
       }
@@ -413,9 +460,9 @@ module.exports = (app, models) => {
     });
 
     return res.json({
-      pregame: game.pregame || null,
-      active: game.active || null,
-      finished: game.finished || null,
+      pregame: game.pregame || false,
+      active: game.active || false,
+      finished: game.finished || false,
       players: players || null,
     });
   });
