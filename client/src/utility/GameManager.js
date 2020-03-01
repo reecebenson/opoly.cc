@@ -1,7 +1,20 @@
+import { ws as WsURL } from '../api/constants';
+
 class GameManager {
   constructor() {
-    console.log("game manager");
+    this.webSocket = null;
+    this.setupWebSocket();
   }
+
+  setupWebSocket = () => {
+
+  };
+
+  closeWebSocket = () => {
+    // Gracefully close the Web Socket
+    this.webSocket.onclose = undefined;
+    this.webSocket.close();
+  };
 
   debugProperties = () => ({
     1: {

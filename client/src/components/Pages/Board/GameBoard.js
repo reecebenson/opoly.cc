@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Logo from '../../Common/images/logo.png';
+import Middle from './Middle';
 import { Property, Corner } from './Items';
 import './scss/GameBoard.scss';
 
@@ -36,7 +36,7 @@ class GameBoard extends React.Component {
   };
 
   render() {
-    const { hovering, gameManager } = this.state;
+    const { hovering } = this.state;
 
     return (
       <div className="board">
@@ -57,10 +57,7 @@ class GameBoard extends React.Component {
             </tr>
             <tr>
               {this.propertyHandler("14", "right")}
-              <td className="board-middle" rowSpan="9" colSpan="9">
-                {hovering !== null && hovering}
-                {hovering === null && <img src={Logo} />}
-              </td>
+              <Middle hovering={hovering} />
               {this.propertyHandler("23", "left")}
             </tr>
             <tr>

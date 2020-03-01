@@ -29,7 +29,6 @@ class Board extends Component {
     }
     else {
       if (localStorage.getItem("game") === undefined && localStorage.getItem("player") === undefined) {
-        console.log("redirect 1");
         return this.props.history.push("/game/join");
       }
     }
@@ -43,11 +42,9 @@ class Board extends Component {
     }
 
     if (!localStorage.getItem("game") && !localStorage.getItem("player")) {
-      console.log("redirect 2");
       return this.props.history.push("/game/join");
     }
   }
-
 
   setupWebSocket = () => {
     this.webSocket = new WebSocket(`${WsURL}`);
