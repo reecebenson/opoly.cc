@@ -1,0 +1,50 @@
+.ui.table {
+  tr.game-row {
+    &:hover {
+      cursor: pointer;
+      background-color: rgb(215, 215, 215);
+    }
+    
+    td.negative,
+    td.positive {
+      background-color: transparent !important;
+    }
+  }
+}
+
+p.red {
+  color: red;
+}
+
+input#red {
+  border: 2px solid red;
+  background-color: rgba(255, 0, 0, 0.5);
+}
+
+.dimmed .ui.dimmer {
+  background-color: rgba(0, 0, 0, 0.95);
+
+  .ui.modal {
+    display: inline-block !important;
+
+    > .ui.header {
+      display: block ruby;
+      padding-bottom: 0;
+    }
+
+    > .content {
+      padding-top: 0;
+
+      > p {
+        padding-bottom: 1.25em;
+      }
+    }
+
+    > .content,
+    > .actions,
+    > .ui.header,
+    input {
+      text-align: center;
+    }
+  }
+}

@@ -25,17 +25,19 @@ let playerStorage = localStorage.getItem("player");
 let gameStorage = localStorage.getItem("player");
 if (playerStorage && gameStorage && playerStorage !== null && gameStorage !== null) {
   try {
-    const { id } = JSON.parse(localStorage.getItem("game"));
-    const { name, password } = JSON.parse(localStorage.getItem("player"));
+    const game = JSON.parse(localStorage.getItem("game"));
+    const player = JSON.parse(localStorage.getItem("player"));
 
     // Only attempt to reauthenticate if the email or session exists
-    if (id && name && password) {
+    if (game.id && player.name && player.password && player.id && player.secretKey) {
       store.dispatch(
         reauthPlayer({
-          gameId: id,
+          gameId: game.id,
           player: {
-            name,
-            password
+            id: player.id,
+            name: player.name,
+            password: player.password,
+            secretKey: player.secretKey
           }
         })
       );

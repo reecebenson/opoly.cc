@@ -1,4 +1,4 @@
-import { GAME_CREATE, PLAYER_QUIT } from "../types";
+import { GAME_CREATE, GAME_JOIN, PLAYER_QUIT } from "../types";
 
 /**
  * @package Game
@@ -10,6 +10,12 @@ const initialState = {};
 const gameReducer = (state = initialState, action = {}) => {
   switch (action.type) {
     case GAME_CREATE:
+      return {
+        ...state,
+        ...action.game,
+      };
+
+    case GAME_JOIN:
       return {
         ...state,
         ...action.game,

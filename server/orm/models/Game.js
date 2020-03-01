@@ -32,6 +32,10 @@ module.exports = db => {
           type: Sequelize.STRING,
           allowNull: false
         },
+        hostSecretKey: {
+          type: Sequelize.STRING,
+          allowNull: true
+        },
         pregame: {
           type: Sequelize.BOOLEAN,
           defaultValue: true
@@ -43,6 +47,10 @@ module.exports = db => {
         finished: {
           type: Sequelize.BOOLEAN,
           defaultValue: false
+        },
+        maxPlayers: {
+          type: Sequelize.INTEGER,
+          defaultValue: 8
         }
       })
   };

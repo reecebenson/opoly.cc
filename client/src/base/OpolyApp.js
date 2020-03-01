@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Switch } from "react-router-dom";
 import { SemanticToastContainer } from "react-semantic-toasts";
-import { LandingPage, Terms, Lobby, Board } from '../components/Pages';
+import { LandingPage, Terms, Lobby, Board, CreateGame, JoinGame } from '../components/Pages';
 import { AuthenticatedRoute, AnonymousRoute } from '../components/Routes';
 import { GameManager } from '../utility';
 import 'react-semantic-toasts/styles/react-semantic-alert.css';
@@ -24,7 +24,10 @@ class OpolyApp extends Component {
         {/* Anonymous Only Routes */}
         <Switch>
           {/* Anyone Routes */}
-          <Route path="/" exact component={LandingPage} />
+          <AnonymousRoute path="/" exact component={LandingPage} />
+          <AnonymousRoute path="/game/create" exact component={CreateGame} />
+          <Route path="/game/join" exact component={JoinGame} />
+          <Route path="/game/join/:gameId" exact component={JoinGame} />
           <Route path="/terms" exact component={Terms} />
 
           {/* Game Paths */}

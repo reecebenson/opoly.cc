@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Form, Tab, Button, Icon } from 'semantic-ui-react';
 
-class CreateGame extends Component {
+class CreateGameForm extends Component {
   constructor(props) {
     super(props);
 
@@ -31,10 +31,6 @@ class CreateGame extends Component {
 
     if (!data.gameName) {
       errors.gameName = "Please enter a game name.";
-    }
-
-    if (!data.gameKey) {
-      errors.gameKey = "Please enter a game key.";
     }
 
     if (!data.playerName) {
@@ -109,8 +105,8 @@ class CreateGame extends Component {
   }
 }
 
-CreateGame.propTypes = {
+CreateGameForm.propTypes = {
   uiCreateGame: PropTypes.func.isRequired,
 };
 
-export default CreateGame;
+export default CreateGameForm;

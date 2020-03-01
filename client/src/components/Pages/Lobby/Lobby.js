@@ -4,7 +4,7 @@ import { toast } from 'react-semantic-toasts';
 import { Grid, Tab, Image, Button } from 'semantic-ui-react';
 import { Footer, LoadingSpinner } from '../../Common';
 import Logo from '../../Common/images/logo.png';
-import { getGameStats, leaveGame } from '../../../actions/game';
+import { getGameStats, leaveGame, forceEndGame } from '../../../actions/game';
 import PropTypes from 'prop-types';
 import { ws as WsURL } from '../../../api/constants';
 
@@ -15,7 +15,8 @@ class Lobby extends Component {
     this.state = {
       loading: false,
       loadText: null,
-      players: null
+      players: null,
+      playerCount: 0
     };
 
     this.lobbyWebSocket = null;
@@ -23,21 +24,21 @@ class Lobby extends Component {
 
   componentDidMount() {
     // Get the game statistics
-    this.props.getGameStats(this.props.game.id)
-      .then(res => {
-        let { data } = res;
-        this.setState({
-          ...this.state,
-          ...data
-        });
-      })
-      .catch(err => {
-        console.warn("[API]: Error when getting game stats:", err)
-        this.setState({
-          ...this.state,
-          players: [],
-        });
-      });
+    // this.props.getGameStats(this.props.game.id)
+    //   .then(res => {
+    //     let { data } = res;
+    //     this.setState({
+    //       ...this.state,
+    //       ...data
+    //     });
+    //   })
+    //   .catch(err => {
+    //     console.warn("[API]: Error when getting game stats:", err)
+    //     this.setState({
+    //       ...this.state,
+    //       players: [],
+    //     });
+    //   });
 
     // Setup the WebSocket
     this.setupWebSocket();
@@ -66,15 +67,28 @@ class Lobby extends Component {
 
       switch (message.type) {
         case "UPDATE_PLAYERS":
+          let currentCount = this.state.playerCount;
           this.setState({
             ...this.state,
-            players: message.players
+            players: message.players,
+            playerCount: message.playerCount
           });
           if (!this.lobbyWebSocket.didInit) {
-            toast({ title: 'New Player Connected' });
+            if (message.playerCount > currentCount) {
+              toast({ title: 'A player connected.' });
+            }
+            else if (message.playerCount < currentCount) {
+              toast({ title: 'A player disconnected' });
+            }
           } else {
             this.lobbyWebSocket.didInit = false;
           }
+          break;
+
+        case "END_GAME":
+          // Check if the host left
+          toast({ title: 'The host ended the game.' });
+          this.props.leaveGame(this.props.game.id, this.props.player);
           break;
       }
     }
@@ -123,22 +137,68 @@ class Lobby extends Component {
     },
     {
       menuItem: 'Start Game',
-      render: () => <Tab.Pane attached={false}>Start</Tab.Pane>
+      render: () => <Tab.Pane attached={false}>
+        {this.props.game.host === this.props.player.id && (
+          <div>
+            Start Game
+          </div>
+        )}
+        {this.props.game.host !== this.props.player.id && (
+          <div>
+            You're not the host, you cannot start this game.
+          </div>
+        )}
+      </Tab.Pane>
     },
     {
       menuItem: 'Game Options',
-      render: () => <Tab.Pane attached={false}>Game Options</Tab.Pane>
+      render: () => <Tab.Pane attached={false}>
+        {this.props.game.host === this.props.player.id && (
+          <div>
+            Game Options
+          </div>
+        )}
+        {this.props.game.host !== this.props.player.id && (
+          <div>
+            You're not the host, you cannot change the game options.
+            (might change to disable output)
+          </div>
+        )}
+      </Tab.Pane>
     },
     {
       menuItem: 'Leave Game',
       render: () => <Tab.Pane attached={false} style={{ textAlign: "center" }}>
-        <p>Are you sure you want to leave?</p>
+        {this.props.game.host === this.props.player.id && (
+          <div>
+            <h3 style={{ marginBottom: "0" }}>Are you sure you want to leave?</h3>
+            <p>As the host, leaving this game will end the session and kick all players.</p>
+            <p></p>
+          </div>
+        )}
+        {this.props.game.host !== this.props.player.id && (
+          <h3>Are you sure you want to leave?</h3>
+        )}
         <Button negative onClick={() => {
           if (this.lobbyWebSocket) {
+            if (this.props.game.host === this.props.player.id) {
+              this.props.forceEndGame(this.props.game.id, this.props.game.hostSecretKey);
+              this.lobbyWebSocket.send(JSON.stringify({
+                type: "endgame",
+                game: this.props.game,
+                player: this.props.player
+              }))
+            }
+            this.lobbyWebSocket.onclose = undefined;
+            this.lobbyWebSocket.send(JSON.stringify({
+              type: "leave",
+              game: this.props.game,
+              player: this.props.player
+            }));
             this.lobbyWebSocket.close();
           }
 
-          this.props.leaveGame();
+          this.props.leaveGame(this.props.game.id, this.props.player);
           this.props.history.push("/");
         }}>Leave Game</Button>
       </Tab.Pane>
@@ -176,5 +236,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getGameStats, leaveGame }
+  { getGameStats, leaveGame, forceEndGame }
 )(Lobby);

@@ -17,8 +17,7 @@ module.exports = (app, models) => {
    */
   app.all("/player/auth", async (req, res) => {
     let data = req.body;
-
-    if (!data.gameId || !data.player || (data.player && (!data.player.name || !data.player.password))) {
+    if (!data.gameId || !data.player || (data.player && (!data.player.id || !data.player.secretKey || !data.player.name || !data.player.password))) {
       return res.status(404).json({ status: 'FAIL', message: 'Invalid data received for reauthentication.' });
     }
 
@@ -44,8 +43,10 @@ module.exports = (app, models) => {
     let player = await models.Player.findOne({
       where: {
         gameId: data.gameId,
+        id: data.player.id,
         name: data.player.name,
         password: data.player.password,
+        secretKey: data.player.secretKey
       }
     });
 
@@ -64,7 +65,8 @@ module.exports = (app, models) => {
           id: player.id,
           name: player.name,
           password: player.password,
-          createdAt: player.createdAt
+          createdAt: player.createdAt,
+          secretKey: player.secretKey,
         },
         game: {
           id: game.id,

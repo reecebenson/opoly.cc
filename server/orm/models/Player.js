@@ -31,7 +31,11 @@ module.exports = db => {
         password: {
           type: Sequelize.STRING,
           allowNull: false
-        }
+        },
+        secretKey: {
+          type: Sequelize.STRING,
+          allowNull: true
+        },
       })
   };
 };

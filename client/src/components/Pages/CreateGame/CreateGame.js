@@ -4,9 +4,10 @@ import { connect } from "react-redux";
 import { Grid, Tab, Image } from 'semantic-ui-react';
 import Logo from '../../Common/images/logo.png';
 import { Footer, LoadingSpinner } from '../../Common';
-import Welcome from './Welcome';
+import { createGame } from '../../../actions/game';
+import CreateGameForm from './CreateGameForm';
 
-class LandingPage extends Component {
+class CreateGame extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,15 +17,45 @@ class LandingPage extends Component {
     };
   }
 
+  uiCreateGame = (gameData) => {
+    if (Object.keys(this.props.game).length > 0) {
+      return;
+    }
+
+    this.setState({
+      ...this.state,
+      loading: true,
+      loadText: `Creating game '${gameData.gameName}'...`,
+      creatingGame: true,
+    }, () => this.props.createGame(gameData));
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (Object.keys(prevProps.game).length === 0 && Object.keys(this.props.game).length > 0) {
+      this.setState({
+        loading: true,
+        loadText: `Game created, creating player...`
+      });
+    }
+
+    if (Object.keys(prevProps.player).length === 0 && Object.keys(this.props.player).length > 0) {
+      this.setState({
+        loading: true,
+        loadText: `Player created. Creating waiting lobby...`
+      });
+      setTimeout(() => this.props.history.push("/game/lobby"), 750);
+    }
+  }
+
   /* Default Tabs */
   landingTabs = () => ([
     {
       menuItem: 'Welcome',
-      render: () => <Welcome />,
+      render: () => this.props.history.push("/"),
     },
     {
       menuItem: 'Create a game',
-      render: () => this.props.history.push("/game/create"),
+      render: () => <CreateGameForm uiCreateGame={this.uiCreateGame} />,
     },
     {
       menuItem: 'Join an existing game',
@@ -36,7 +67,7 @@ class LandingPage extends Component {
   hasGameTabs = () => ([
     {
       menuItem: 'Welcome',
-      render: () => <Welcome />,
+      render: () => this.props.history.push("/"),
     },
     {
       menuItem: 'My Game',
@@ -45,7 +76,7 @@ class LandingPage extends Component {
   ]);
 
   render() {
-    const { type, loading, loadText } = this.state;
+    const { loading, loadText } = this.state;
 
     // Check if user has a game
     let hasGame = (Object.keys(this.props.game).length > 0);
@@ -60,7 +91,7 @@ class LandingPage extends Component {
             <Tab
               menu={{ pointing: true }}
               panes={!hasGame ? this.landingTabs() : this.hasGameTabs()}
-              defaultActiveIndex={0}
+              defaultActiveIndex={1}
             />
             <Footer />
           </Grid.Column>
@@ -77,5 +108,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  null
-)(LandingPage);
+  { createGame }
+)(CreateGame);

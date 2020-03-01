@@ -42,6 +42,29 @@ class WSL {
     console.log(`Added ${player.id} to ${gameId}`);
   }
 
+  removeClientFromGame = (gameId, socket, player) => {
+    if (!Object.keys(this._games[gameId]['clients']).includes(player.id)) {
+      return;
+    }
+    delete this._games[gameId]['clients'][player.id];
+    console.log(`Removed ${player.id} to ${gameId}`);
+  }
+
+  endGame = (gameId) => {
+    if (!this.getGame(gameId)) { return; }
+
+    let clients = this._games[gameId]['clients'];
+    Object.keys(clients).forEach(key => {
+      let player = clients[key];
+      if (player.socket) {
+        player.socket.send(JSON.stringify({ type: "END_GAME" }));
+      }
+    });
+
+    // Delete the game
+    delete this._games[gameId];
+  };
+
   distributeClients = (gameId) => {
     // Gather Player Data
     let players = [];
@@ -59,7 +82,8 @@ class WSL {
       if (player.socket) {
         player.socket.send(JSON.stringify({
           type: "UPDATE_PLAYERS",
-          players: players
+          players: players,
+          playerCount: Object.keys(players).length
         }));
       }
     })
@@ -102,7 +126,7 @@ class WSL {
     catch (e) { return console.warn("died", e); }
 
     switch (message.type) {
-      case "init":
+      case "init": {
         let game = this.getGame(message.game.id);
         if (!game) {
           this.createGame(message.game, ws);
@@ -110,6 +134,22 @@ class WSL {
         this.addClientToGame(message.game.id, ws, message.player);
         this.distributeClients(message.game.id);
         break;
+      }
+
+      case "leave": {
+        let game = this.getGame(message.game.id);
+        if (!game) { return; }
+        this.removeClientFromGame(message.game.id, ws, message.player);
+        this.distributeClients(message.game.id);
+        break;
+      }
+
+      case "endgame": {
+        let game = this.getGame(message.game.id);
+        if (!game) { return; }
+        this.endGame(message.game.id);
+        break;
+      }
     }
   };
 };
