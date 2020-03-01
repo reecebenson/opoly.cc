@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { toast } from 'react-semantic-toasts';
-import { Grid, Tab, Image, Button } from 'semantic-ui-react';
+import { Grid, Tab, Image, Button, Icon } from 'semantic-ui-react';
 import { Footer, LoadingSpinner } from '../../Common';
 import Logo from '../../Common/images/logo.png';
-import { getGameStats, leaveGame, forceEndGame } from '../../../actions/game';
+import { getGameStats, leaveGame, forceEndGame, kickPlayer } from '../../../actions/game';
 import PropTypes from 'prop-types';
 import { ws as WsURL } from '../../../api/constants';
 
@@ -78,17 +78,30 @@ class Lobby extends Component {
               toast({ title: 'A player connected.' });
             }
             else if (message.playerCount < currentCount) {
-              toast({ title: 'A player disconnected' });
+              if (message.extra && message.extra === "kick") {
+                toast({ title: 'A player was kicked' });
+              }
+              else {
+                toast({ title: 'A player disconnected' });
+              }
             }
           } else {
             this.lobbyWebSocket.didInit = false;
           }
           break;
 
+        case "KICK_ME":
+          toast({ title: 'You were kicked from the game.' });
+          this.props.leaveGame(this.props.game.id, this.props.player);
+          this.lobbyWebSocket.onclose = undefined;
+          this.lobbyWebSocket.close();
+          break;
+
         case "END_GAME":
-          // Check if the host left
           toast({ title: 'The host ended the game.' });
           this.props.leaveGame(this.props.game.id, this.props.player);
+          this.lobbyWebSocket.onclose = undefined;
+          this.lobbyWebSocket.close();
           break;
       }
     }
@@ -120,13 +133,21 @@ class Lobby extends Component {
         <table style={{ width: "100%", textAlign: "center" }}>
           <thead>
             <tr>
-              <th style={{ width: "50%" }}>Name</th>
+              {this.props.player.id === this.props.game.host && (<th style={{ width: "1%" }}>Kick?</th>)}
+              <th style={{ width: "35%" }}>Name</th>
               <th style={{ width: "50%" }}>Joined</th>
             </tr>
           </thead>
           <tbody>
             {this.state.players !== null && this.state.players.map((player, i) => (
               <tr key={i}>
+                {this.props.player.id === this.props.game.host && (
+                  <td style={{ width: "5%" }}>
+                    {this.props.player.id !== player.id && (
+                      <Icon name='boot circle' onClick={() => this.props.kickPlayer(this.props.game, player, this.lobbyWebSocket)} />
+                    )}
+                  </td>
+                )}
                 <td>{player.name}</td>
                 <td>{player.createdAt}</td>
               </tr>
@@ -236,5 +257,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getGameStats, leaveGame, forceEndGame }
+  { getGameStats, leaveGame, forceEndGame, kickPlayer }
 )(Lobby);

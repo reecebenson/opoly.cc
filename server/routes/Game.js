@@ -117,6 +117,48 @@ module.exports = (app, models) => {
     }
 
     // Destroy the player
+    try { await player.destroy(); }
+    catch (e) { }
+    return res.json({ status: 'OK' });
+  });
+
+  /**
+   * ----------------------------------------------------------
+   * @route     /api/game/force-end
+   * @desc      A route used for force ending a game.
+   * @request   POST
+   * @access    Public
+   * ----------------------------------------------------------
+   */
+  app.all("/game/kick", async (req, res) => {
+    let data = req.body;
+    if (!data.gameId || !data.key || !data.playerId) {
+      return res.status(403).json({ status: 'FAIL', data });
+    }
+
+    let game = await models.Game.findOne({
+      where: {
+        id: data.gameId,
+        hostSecretKey: data.key
+      }
+    });
+
+    if (!game) {
+      return res.status(404).json({ status: 'FAIL', message: 'Invalid game.' });
+    }
+
+    let player = await models.Player.findOne({
+      where: {
+        id: data.playerId,
+        gameId: data.gameId,
+      }
+    });
+
+    if (!player) {
+      return res.status(404).json({ status: 'FAIL', message: 'Invalid player.' });
+    }
+
+    // Kick the player
     await player.destroy();
     return res.json({ status: 'OK' });
   });

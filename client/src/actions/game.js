@@ -39,6 +39,23 @@ export const leaveGame = (gameId, player) => dispatch => {
   dispatch(redLeaveGame());
 }
 
+export const kickPlayer = (game, player, ws) => dispatch =>
+  new API("/api/game/kick")
+    .post({
+      gameId: game.id,
+      key: game.hostSecretKey,
+      playerId: player.id
+    })
+    .then(res => {
+      if (!ws) { return; }
+      ws.send(JSON.stringify({
+        type: "kick",
+        game: game,
+        player: player
+      }));
+    })
+    .catch(err => console.warn(`[API]: Unable to kick player.`, err));
+
 export const forceEndGame = (gameId, ownerSecretKey) => dispatch =>
   new API("/api/game/force-end")
     .post({

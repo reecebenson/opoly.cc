@@ -47,7 +47,18 @@ class WSL {
       return;
     }
     delete this._games[gameId]['clients'][player.id];
-    console.log(`Removed ${player.id} to ${gameId}`);
+    console.log(`Removed ${player.id} from ${gameId}`);
+  }
+
+  kickClient = (gameId, socket, player) => {
+    if (!Object.keys(this._games[gameId]['clients']).includes(player.id)) {
+      return;
+    }
+    this._games[gameId]['clients'][player.id].socket.send(JSON.stringify({
+      type: "KICK_ME"
+    }));
+    delete this._games[gameId]['clients'][player.id];
+    console.log(`Kicked ${player.id} from ${gameId}`);
   }
 
   endGame = (gameId) => {
@@ -65,7 +76,7 @@ class WSL {
     delete this._games[gameId];
   };
 
-  distributeClients = (gameId) => {
+  distributeClients = (gameId, extra = undefined) => {
     // Gather Player Data
     let players = [];
     Object.keys(this._games[gameId]['clients']).forEach(plyrKey => {
@@ -83,7 +94,8 @@ class WSL {
         player.socket.send(JSON.stringify({
           type: "UPDATE_PLAYERS",
           players: players,
-          playerCount: Object.keys(players).length
+          playerCount: Object.keys(players).length,
+          extra: extra
         }));
       }
     })
@@ -148,6 +160,14 @@ class WSL {
         let game = this.getGame(message.game.id);
         if (!game) { return; }
         this.endGame(message.game.id);
+        break;
+      }
+
+      case "kick": {
+        let game = this.getGame(message.game.id);
+        if (!game) { return; }
+        this.kickClient(message.game.id, ws, message.player);
+        this.distributeClients(message.game.id, "kick");
         break;
       }
     }

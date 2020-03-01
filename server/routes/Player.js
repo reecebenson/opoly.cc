@@ -73,7 +73,8 @@ module.exports = (app, models) => {
           name: game.name,
           key: game.key,
           host: game.owner,
-          hostName: owner.name
+          hostName: owner.name,
+          hostSecretKey: (game.owner === player.id ? game.hostSecretKey : undefined),
         }
       },
       status: 'OK'
