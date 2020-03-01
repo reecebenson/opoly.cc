@@ -12,15 +12,21 @@ class LandingPage extends Component {
 
     this.state = {
       loading: false,
-      loadText: null
+      loadText: null,
+      creatingGame: false,
     };
   }
 
   uiCreateGame = (gameData) => {
+    if (Object.keys(this.props.game).length > 0) {
+      return;
+    }
+
     this.setState({
       ...this.state,
       loading: true,
       loadText: `Creating game '${gameData.gameName}'...`,
+      creatingGame: true,
     }, () => this.props.createGame(gameData));
   }
 
@@ -41,6 +47,7 @@ class LandingPage extends Component {
     }
   }
 
+  /* Default Tabs */
   landingTabs = () => ([
     {
       menuItem: 'Welcome',
@@ -56,9 +63,23 @@ class LandingPage extends Component {
     }
   ]);
 
+  /* Existing Game Tabs */
+  hasGameTabs = () => ([
+    {
+      menuItem: 'Welcome',
+      render: () => <Welcome />,
+    },
+    {
+      menuItem: 'My Game',
+      render: () => this.props.history.push("/game/lobby"),
+    }
+  ]);
+
   render() {
     const { loading, loadText } = this.state;
 
+    // Check if user has a game
+    let hasGame = (Object.keys(this.props.game).length > 0);
     return (
       <div>
         {loading && <LoadingSpinner text={loadText} />}
@@ -67,7 +88,7 @@ class LandingPage extends Component {
             <div style={{ textAlign: "center" }}>
               <Image src={Logo} style={{ display: "inline-block", marginBottom: "1em" }} />
             </div>
-            <Tab menu={{ pointing: true }} panes={this.landingTabs()} />
+            <Tab menu={{ pointing: true }} panes={!hasGame ? this.landingTabs() : this.hasGameTabs()} />
             <Footer />
           </Grid.Column>
         </Grid>
