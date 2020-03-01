@@ -16,7 +16,8 @@ class Lobby extends Component {
       loading: false,
       loadText: null,
       players: null,
-      playerCount: 0
+      playerCount: 0,
+      isStarting: false,
     };
 
     this.lobbyWebSocket = null;
@@ -43,6 +44,24 @@ class Lobby extends Component {
     // Setup the WebSocket
     this.setupWebSocket();
   }
+
+  startGame = () => {
+    this.setState({
+      isStarting: true
+    }, () => {
+      // Check if we have a WebSocket
+      if (!this.lobbyWebSocket) {
+        return;
+      }
+
+      // Send start game request
+      this.lobbyWebSocket.send(JSON.stringify({
+        type: "startgame",
+        game: this.props.game,
+        player: this.props.player
+      }));
+    });
+  };
 
   setupWebSocket = () => {
     this.lobbyWebSocket = new WebSocket(`${WsURL}`);
@@ -97,11 +116,18 @@ class Lobby extends Component {
           this.lobbyWebSocket.close();
           break;
 
+        case "START_GAME":
+          toast({ title: 'Game is starting...' });
+          this.lobbyWebSocket.onclose = undefined;
+          this.lobbyWebSocket.close();
+          setTimeout(() => {
+            this.props.history.push("/game/play");
+          }, 750);
+          break;
+
         case "END_GAME":
           toast({ title: 'The host ended the game.' });
           this.props.leaveGame(this.props.game.id, this.props.player);
-          this.lobbyWebSocket.onclose = undefined;
-          this.lobbyWebSocket.close();
           break;
       }
     }
@@ -155,21 +181,6 @@ class Lobby extends Component {
           </tbody>
         </table>
       </Tab.Pane>,
-    },
-    {
-      menuItem: 'Start Game',
-      render: () => <Tab.Pane attached={false}>
-        {this.props.game.host === this.props.player.id && (
-          <div>
-            Start Game
-          </div>
-        )}
-        {this.props.game.host !== this.props.player.id && (
-          <div>
-            You're not the host, you cannot start this game.
-          </div>
-        )}
-      </Tab.Pane>
     },
     {
       menuItem: 'Game Options',
@@ -227,7 +238,7 @@ class Lobby extends Component {
   ]);
 
   render() {
-    const { loading, loadText } = this.state;
+    const { isStarting, loading, loadText } = this.state;
 
     return (
       <div>
@@ -238,6 +249,12 @@ class Lobby extends Component {
               <Image src={Logo} style={{ display: "inline-block", marginBottom: "1em" }} />
             </div>
             <Tab menu={{ pointing: true }} panes={this.tabs()} />
+            {this.props.game.host === this.props.player.id && (
+              <Button loading={isStarting} positive style={{ width: "100%", marginTop: "1em" }} onClick={this.startGame}>
+                Start Game
+                <Icon name='chevron right' />
+              </Button>
+            )}
             <Footer />
           </Grid.Column>
         </Grid>

@@ -46,6 +46,39 @@ $darker-blue: rgb(12, 29, 43);
 
     .toolbar {
       background-color: $dark-blue;
+      color: white;
+
+      .chat {
+        .messages {
+          min-height: 300px;
+
+          ul {
+            list-style: none;
+            padding-left: 0.75em;
+          }
+        }
+
+        .user-input {
+          input {
+            background-color: rgba(255, 255, 255, 0.6);
+
+            &:hover {
+              background-color: rgba(255, 255, 255, 0.75);
+            }
+
+            &:focus {
+              background-color: rgba(255, 255, 255, 1.0);
+            }
+          }
+        }
+      }
+
+      .system-logs {
+        ul {
+          list-style: none;
+          padding-left: 0.75em;
+        }
+      }
 
       &.left, &.right {
         flex: 0.2 1;

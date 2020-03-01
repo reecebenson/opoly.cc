@@ -16,6 +16,11 @@ class WSL {
     this.setupWebSocket();
   }
 
+  getTime = () => {
+    let date = new Date();
+    return date.getHours() + ":" + String(date.getMinutes()).padStart(2, "0");
+  }
+
   getGame = (gameId) => {
     if (Object.keys(this._games).includes(gameId)) {
       return this._games[gameId];
@@ -28,7 +33,11 @@ class WSL {
     if (!this.getGame(gameDetails.id)) {
       this._games[gameDetails.id] = {
         ...gameDetails,
-        clients: {}
+        clients: {},
+        logs: [
+          { time: this.getTime(), message: `Game setup by ${gameDetails.hostName}` },
+        ],
+        messages: []
       }
     }
     return null;
@@ -42,8 +51,12 @@ class WSL {
     console.log(`Added ${player.id} to ${gameId}`);
   }
 
+  clientExists = (gameId, playerId) => {
+    return Object.keys(this._games[gameId]['clients']).includes(playerId);
+  }
+
   removeClientFromGame = (gameId, socket, player) => {
-    if (!Object.keys(this._games[gameId]['clients']).includes(player.id)) {
+    if (!this.clientExists(gameId, player.id)) {
       return;
     }
     delete this._games[gameId]['clients'][player.id];
@@ -51,7 +64,7 @@ class WSL {
   }
 
   kickClient = (gameId, socket, player) => {
-    if (!Object.keys(this._games[gameId]['clients']).includes(player.id)) {
+    if (!this.clientExists(gameId, player.id)) {
       return;
     }
     this._games[gameId]['clients'][player.id].socket.send(JSON.stringify({
@@ -98,8 +111,35 @@ class WSL {
           extra: extra
         }));
       }
-    })
+    });
   };
+
+  addChatMessage = (gameId, player, message) => {
+    if (!this.getGame(gameId)) { return console.log("Invalid game"); }
+    if (!this.clientExists(gameId, player.id)) { return console.log("Invalid client"); }
+    this._games[gameId]['messages'].push({
+      time: this.getTime(),
+      message: message,
+      playerId: player.id,
+      playerName: player.name
+    });
+  }
+
+  broadcastToClients = (data, gameId) => {
+    if (!this.getGame(gameId)) { return; }
+
+    // Broadcast message to clients
+    Object.keys(this._games[gameId]['clients']).forEach(key => {
+      let player = this._games[gameId]['clients'][key];
+      if (player.socket) {
+        player.socket.send(JSON.stringify(data));
+      }
+      else {
+        delete this._games[gameId]['clients'][key];
+        this.distributeClients(gameId);
+      }
+    });
+  }
 
   /**
    * setupWebSocket
@@ -138,6 +178,46 @@ class WSL {
     catch (e) { return console.warn("died", e); }
 
     switch (message.type) {
+      /**
+       * ------------------------------------------------------
+       * GAME MESSAGES
+       * ------------------------------------------------------
+       */
+      case "game-on": {
+        let game = this.getGame(message.game.id);
+        if (!game) { return; }
+        ws.send(JSON.stringify({
+          type: "POLL",
+          data: {
+            logs: game.logs,
+            messages: game.messages,
+          }
+        }));
+        break;
+      }
+
+      case "message": {
+        let game = this.getGame(message.game.id);
+        if (!game) { return; }
+        this.addChatMessage(message.game.id, message.player, message.message);
+        this.handleClientMessage(ws, JSON.stringify({
+          type: "game-on",
+          game: message.game,
+          player: message.player
+        }));
+        break;
+      }
+
+
+
+
+
+
+      /**
+       * ------------------------------------------------------
+       * LOBBY MESSAGES
+       * ------------------------------------------------------
+       */
       case "init": {
         let game = this.getGame(message.game.id);
         if (!game) {
@@ -153,6 +233,20 @@ class WSL {
         if (!game) { return; }
         this.removeClientFromGame(message.game.id, ws, message.player);
         this.distributeClients(message.game.id);
+        break;
+      }
+
+      case "startgame": {
+        let game = this.getGame(message.game.id);
+        if (!game) { return; }
+        if (message.game.hostSecretKey !== game.hostSecretKey) {
+          return ws.send(JSON.stringify({ type: "INVALID_ACTION", message: "Unable to start the game, you are not the host. " }));
+        }
+
+        // Broadcast message to clients
+        this.broadcastToClients({
+          type: "START_GAME"
+        }, game.id);
         break;
       }
 
