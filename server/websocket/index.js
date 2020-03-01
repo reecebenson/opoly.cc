@@ -186,6 +186,14 @@ class WSL {
       case "game-on": {
         let game = this.getGame(message.game.id);
         if (!game) { return; }
+
+        if (message.socketOpener) {
+          game.logs.push({
+            time: this.getTime(),
+            message: message.player.name + " connected."
+          });
+        }
+
         ws.send(JSON.stringify({
           type: "POLL",
           data: {

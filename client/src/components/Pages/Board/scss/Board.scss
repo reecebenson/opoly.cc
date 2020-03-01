@@ -60,6 +60,7 @@ $darker-blue: rgb(12, 29, 43);
 
         .user-input {
           input {
+            border-radius: 0;
             background-color: rgba(255, 255, 255, 0.6);
 
             &:hover {

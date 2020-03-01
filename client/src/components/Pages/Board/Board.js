@@ -46,7 +46,8 @@ class Board extends Component {
       this.webSocket.send(JSON.stringify({
         type: "game-on",
         game: this.props.game,
-        player: this.props.player
+        player: this.props.player,
+        socketOpener: true
       }));
       toast({ title: 'Connected', description: <p>Successfully connected to the game server.</p> });
       this.webSocket.didInit = true;
