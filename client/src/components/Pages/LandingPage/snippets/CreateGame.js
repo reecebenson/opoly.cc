@@ -8,10 +8,10 @@ class CreateGame extends Component {
 
     this.state = {
       data: {
-        gameName: "",
-        gameKey: "",
-        playerName: "",
-        playerPass: "",
+        gameName: "test", //"",
+        gameKey: "test", //"",
+        playerName: "test", //"",
+        playerPass: "test", //"",
       },
       errors: {}
     };
@@ -57,7 +57,7 @@ class CreateGame extends Component {
 
     // Check if we made no errors
     if (Object.keys(errors).length === 0) {
-      return this.props.createGame(this.state.data);
+      return this.props.uiCreateGame(this.state.data);
     }
   };
 
@@ -110,7 +110,7 @@ class CreateGame extends Component {
 }
 
 CreateGame.propTypes = {
-  createGame: PropTypes.func.isRequired,
+  uiCreateGame: PropTypes.func.isRequired,
 };
 
 export default CreateGame;

@@ -21,13 +21,11 @@ const AuthenticatedRoute = ({
   );
 
 AuthenticatedRoute.propTypes = {
-  component: PropTypes.any.isRequired,
-  isAuthenticated: PropTypes.bool.isRequired
+  component: PropTypes.any.isRequired
 };
 
 const mapStateToProps = state => ({
-  isAuthenticated:
-    state.user !== null && state.user.session ? !!state.user.session : false
+  isAuthenticated: (state.player && state.player.name && state.player.password && state.game && state.game.name && state.game.key)
 });
 
 export default withRouter(connect(mapStateToProps)(AuthenticatedRoute));

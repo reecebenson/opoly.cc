@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import { connect } from "react-redux";
 import { Grid, Tab, Image } from 'semantic-ui-react';
 import { Welcome, CreateGame, JoinGame } from './snippets';
 import Logo from '../../Common/images/logo.png';
 import { Footer, LoadingSpinner } from '../../Common';
+import { createGame } from '../../../actions/game';
 
 class LandingPage extends Component {
   constructor(props) {
@@ -14,16 +16,29 @@ class LandingPage extends Component {
     };
   }
 
-  createGame = ({ gameName, gameKey, playerName, playerPass }) => {
+  uiCreateGame = (gameData) => {
     this.setState({
       ...this.state,
       loading: true,
-      loadText: `Creating game '${gameName}'...`,
-    }, () => {
-      console.log("createGame");
-      setTimeout(() => this.setState({ loadText: "Initialising lobby..." }), 3000);
-      setTimeout(() => this.setState({ loadText: null, loading: false }), 6500);
-    });
+      loadText: `Creating game '${gameData.gameName}'...`,
+    }, () => this.props.createGame(gameData));
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (Object.keys(prevProps.game).length === 0 && Object.keys(this.props.game).length > 0) {
+      this.setState({
+        loading: true,
+        loadText: `Game created, creating player...`
+      });
+    }
+
+    if (Object.keys(prevProps.player).length === 0 && Object.keys(this.props.player).length > 0) {
+      this.setState({
+        loading: true,
+        loadText: `Player created. Creating waiting lobby...`
+      });
+      setTimeout(() => this.props.history.push("/game/lobby"), 750);
+    }
   }
 
   landingTabs = () => ([
@@ -33,7 +48,7 @@ class LandingPage extends Component {
     },
     {
       menuItem: 'Create a game',
-      render: () => <CreateGame createGame={this.createGame} />,
+      render: () => <CreateGame uiCreateGame={this.uiCreateGame} />,
     },
     {
       menuItem: 'Join an existing game',
@@ -61,4 +76,12 @@ class LandingPage extends Component {
   }
 }
 
-export default LandingPage;
+const mapStateToProps = state => ({
+  game: state.game,
+  player: state.player,
+});
+
+export default connect(
+  mapStateToProps,
+  { createGame }
+)(LandingPage);

@@ -14,6 +14,12 @@ class Lobby extends Component {
     };
   }
 
+  componentDidMount() {
+
+    console.log(this.props);
+  }
+
+
   render() {
     const { loading, loadText } = this.state;
 

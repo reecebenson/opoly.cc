@@ -47,5 +47,5 @@ app.all("*", (req, res) =>
 
 // Express Listener
 server.listen(config.serverPort, () => {
-  console.log(`[SRV]: API is serving on port ${process.env.POKIO_API_PORT}!`);
+  console.log(`[SRV]: API is serving on port ${process.env.OPOLY_SERVER_PORT}!`);
 });
