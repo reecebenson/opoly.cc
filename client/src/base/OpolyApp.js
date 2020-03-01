@@ -4,6 +4,7 @@ import { SemanticToastContainer } from "react-semantic-toasts";
 import { LandingPage, Terms, Lobby, Board } from '../components/Pages';
 import { AuthenticatedRoute, AnonymousRoute } from '../components/Routes';
 import { GameManager } from '../utility';
+import 'react-semantic-toasts/styles/react-semantic-alert.css';
 
 class OpolyApp extends Component {
   constructor(props) {

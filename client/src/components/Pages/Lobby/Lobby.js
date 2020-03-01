@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
+import { toast } from 'react-semantic-toasts';
 import { Grid, Tab, Image, Button } from 'semantic-ui-react';
 import { Footer, LoadingSpinner } from '../../Common';
 import Logo from '../../Common/images/logo.png';
@@ -22,7 +23,7 @@ class Lobby extends Component {
 
   componentDidMount() {
     // Get the game statistics
-    /*this.props.getGameStats(this.props.game.id)
+    this.props.getGameStats(this.props.game.id)
       .then(res => {
         let { data } = res;
         this.setState({
@@ -36,7 +37,7 @@ class Lobby extends Component {
           ...this.state,
           players: [],
         });
-      });*/
+      });
 
     // Setup the WebSocket
     this.setupWebSocket();
@@ -52,6 +53,8 @@ class Lobby extends Component {
         game: this.props.game,
         player: this.props.player
       }));
+      toast({ title: 'Connected', description: <p>Successfully connected to the lobby server.</p> });
+      this.lobbyWebSocket.didInit = true;
     }
     this.lobbyWebSocket.onmessage = (data) => {
       console.log(`[WS]: Received message`);
@@ -67,6 +70,11 @@ class Lobby extends Component {
             ...this.state,
             players: message.players
           });
+          if (!this.lobbyWebSocket.didInit) {
+            toast({ title: 'New Player Connected' });
+          } else {
+            this.lobbyWebSocket.didInit = false;
+          }
           break;
       }
     }
