@@ -19,7 +19,7 @@ class OpolyApp extends Component {
 
     return (
       <div className={appClass}>
-        <SemanticToastContainer position="top-right" />
+        <SemanticToastContainer position="bottom-right" />
 
         {/* Anonymous Only Routes */}
         <Switch>

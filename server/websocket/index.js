@@ -51,6 +51,10 @@ class WSL {
     console.log(`Added ${player.id} to ${gameId}`);
   }
 
+  updateClientSocket = (gameId, playerId, ws) => {
+    this._games[gameId]['clients'][playerId]['socket'] = ws;
+  }
+
   clientExists = (gameId, playerId) => {
     return Object.keys(this._games[gameId]['clients']).includes(playerId);
   }
@@ -187,6 +191,14 @@ class WSL {
         let game = this.getGame(message.game.id);
         if (!game) { return; }
 
+        // Check if this player exists
+        if (!this.clientExists(message.game.id, message.player.id)) {
+          this.addClientToGame(message.game.id, ws, message.player);
+        }
+        else {
+          this.updateClientSocket(message.game.id, message.player.id, ws);
+        }
+
         if (message.socketOpener) {
           game.logs.push({
             time: this.getTime(),
@@ -208,11 +220,13 @@ class WSL {
         let game = this.getGame(message.game.id);
         if (!game) { return; }
         this.addChatMessage(message.game.id, message.player, message.message);
-        this.handleClientMessage(ws, JSON.stringify({
-          type: "game-on",
-          game: message.game,
-          player: message.player
-        }));
+        this.broadcastToClients({
+          type: "POLL",
+          data: {
+            logs: game.logs,
+            messages: game.messages,
+          }
+        }, message.game.id);
         break;
       }
 
